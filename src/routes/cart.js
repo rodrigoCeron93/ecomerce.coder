@@ -1,7 +1,7 @@
 const { response } = require("express");
 const express = require("express");
 const { Router } = express;
-const Carrito = require("../containers/cart");
+const Carrito = require("../Dao/cart");
 
 
 
@@ -64,33 +64,33 @@ router.post("/cart", async (req, res) => {
     const quantity = req.body.quantity;
   
     const cart = await carrito.getById(cid);
-    console.log(cart.products)
+  
     if (!cart) {
       return res.status(404).send({ error: "Carrito no encontrado" });
     }
   
     const existingProduct = cart.products.find((p) => p.id === pid);
-    console.log(existingProduct,"sa")
+
     if (existingProduct) {
       existingProduct.quantity += 1;
     } else {
-      cart.products.push({ id: pid, quantity: 1 });
+      cart.products.push({ id: pid, quantity: quantity?quantity:1 });
     }
-    console.log(cart)
+    console.log(cart,"sdsa")
     const response = await carrito.saveProduct(cid,cart);
     response != null
-      ? res.status(201).send({ id: response.id })
+      ? res.status(201).send(response)
       : res.status(500).send();
   });
 
   
 
-router.delete("/cart/:id/productos/:idproduct", async (req, res) => {
+router.delete("/cart/:id/products/:idproduct", async (req, res) => {
   
       const id = req.params.id;
       const idproduct= req.params.idproduct
       const result = await carrito.deleteProductsById(id,idproduct);
-      result!=null?res.status(201).send():res.status(500).send()
+      result!=null?res.status(201).send("eliminado"):res.status(500).send("no fue posible eliminar el producto")
   });
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const { response } = require("express");
 const express = require("express");
 const { Router } = express;
-const Productos = require("../containers/products");
+const Productos = require("../Dao/products");
 
 
 const producto = new Productos();

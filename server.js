@@ -2,9 +2,10 @@ const express = require('express')
 const productsRouter = require('./src/routes/products')
 const cartRouter = require('./src/routes/cart')
 const app=  express()
-
+const {config} = require("./src/config/config")
 const PORT=8080
 
+config.connectDB()
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use('/api',productsRouter)
