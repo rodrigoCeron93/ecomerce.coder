@@ -1,0 +1,24 @@
+{{#each products.payload}}
+  <div class="product">
+    <h2>{{title}}</h2>
+    <p>{{description}}</p>
+    <p>Código: {{code}}</p>
+    <p>Precio: {{price}}</p>
+    <p>Estado: {{status}}</p>
+    <p>Stock: {{stock}}</p>
+    <p>Categoría: {{category}}</p>
+   
+    <button class="add-to-cart" data-id="{{_id}}">Agregar al carrito</button>
+   
+  </div>
+{{/each}}
+
+
+
+{{#if nextLink}}
+  <a href="{{nextLink}}">Siguiente página</a>
+{{/if}}
+
+{{#if prevLink}}
+  <a href="{{prevLink}}">Página anterior</a>
+{{/if}}

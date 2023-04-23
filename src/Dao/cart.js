@@ -6,7 +6,7 @@ class Carrito {
   
     async getById(id) {
       try {
-        const carrito = await CartModel.findById(id).exec();
+        const carrito = await CartModel.findById(id).populate('products.id');
         return carrito;
       } catch (error) {
         console.log(error);
@@ -15,7 +15,7 @@ class Carrito {
   
     async getAll() {
       try {
-        const carritos = await CartModel.find();
+        const carritos = await CartModel.find().populate('products.id');
         return carritos;
       } catch (error) {
         console.log(error);
@@ -83,6 +83,71 @@ class Carrito {
       } catch (error) {
         console.log(error);
         return null;
+      }
+    }
+
+    async updateProduct(cartId,products){
+      try {
+        console.log(products)
+        const updatedCart = await CartModel.findByIdAndUpdate(
+          cartId,
+          { products: products },
+          { new: true }
+        );
+    
+        if (!updatedCart) {
+          return {
+            status: "error",
+            message: "No se encontró el carrito con el ID especificado",
+          };
+        }
+    
+        return {
+          status: "success",
+          message: "Carrito actualizado correctamente",
+          payload: updatedCart,
+        };
+      } catch (error) {
+        console.error(error);
+        return {
+          status: "error",
+          message: "Error al actualizar el carrito",
+        };
+      }
+    }
+
+    async updateProductQuantity(cid,pid,quantity){
+      try { 
+        
+        
+        const cart = await CartModel.findOneAndUpdate(
+          { _id: cid, "products.id": pid },
+          { $set: { "products.$.quantity": quantity } },
+          { new: true }
+        );
+    
+    
+        return cart;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    async deletecart(cartId){
+      try {
+        const cart = await CartModel.findById(cartId);
+    
+        if (!cart) {
+          return { message: 'El carrito no existe' };
+        }
+    
+        cart.products = [];
+        await cart.save();
+    
+        return { message: 'carrito eliminado' };
+      } catch (error) {
+        console.log(error);
+        return { message: 'Error al eliminar carrito' };
       }
     }
   }

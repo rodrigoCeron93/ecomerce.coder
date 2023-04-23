@@ -2,7 +2,12 @@ const mongoose = require('mongoose');
 
 // Definir el esquema del item del carrito
 const CartItemSchema = new mongoose.Schema({
-  id: { type: String, required: true },
+  id: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Product',
+    required: true 
+  },
+
   quantity: { type: Number, required: true }
 });
 

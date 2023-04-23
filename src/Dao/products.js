@@ -13,15 +13,41 @@ class Productos {
     }
   }
 
-  async getAll(limit = null) {
+  async getAll(consulta) {
+    console.log(consulta)
     try {
-      let productos = null;
-      if (limit) {
-        productos = await Product.find().limit(limit);
+      
+      let response = null;
+      if (consulta) {
+
+        
+        const productos = await Product.find(JSON.parse(consulta.query))
+        .sort(consulta.sort)
+        .skip((consulta.page - 1) * consulta.limit)
+        .limit(consulta.limit);
+        
+        const totalProducts =await Product.find(JSON.parse(consulta.query)).count();
+        const totalPages = Math.ceil(totalProducts / consulta.limit);
+        const hasPrevPage = consulta.page > 1;
+        const hasNextPage = consulta.page < totalPages;
+
+        response= {
+          status: "success",
+          payload: productos,
+          totalPages,
+          prevPage: hasPrevPage ? consulta.page - 1 : null,
+          nextPage: hasNextPage ? consulta.page + 1 : null,
+          "page":consulta.page,
+          hasPrevPage,
+          hasNextPage,
+          prevLink: hasPrevPage ? `?page=${consulta.page - 1}&limit=${consulta.limit}&sort=${consulta.sort}&query=${consulta.query}` : null,
+          nextLink: hasNextPage ? `?page=${consulta.page + 1}&limit=${consulta.limit}&sort=${consulta.sort}&query=${consulta.query}` : null
+        };
+
       } else {
-        productos = await Product.find();
+        response = await Product.find();
       }
-      return productos;
+      return response
     } catch (error) {
       console.log(error);
       throw new Error('Error al obtener todos los productos');

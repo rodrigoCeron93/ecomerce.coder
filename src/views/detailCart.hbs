@@ -1,0 +1,28 @@
+
+<h1>Carrito de compras</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Descripcion</th>
+      <th>Categoria</th>
+      <th>Precio</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    {{#each cartItem.products}}
+       
+      <tr>
+        <td>{{id.title}}</td>
+        <td>{{quantity}}</td>
+        <td>{{id.description}}</td>
+        <td>{{id.category}}</td>
+        <td>{{id.price}}</td>
+        
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

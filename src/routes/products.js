@@ -11,12 +11,25 @@ const router = Router();
 router.get("/products/:id?", async (req, res) => {
 
     const id = req.params.id;
-    const limit = req.query.limit;
+    //const limit = req.query.limit;
     try {
       if (!!id) {
         res.send(await producto.getById(id));
       } else {
-        res.send(await producto.getAll(limit));
+        const limit = parseInt(req.query.limit) || 10; // Si no se especifica limit, se devuelve un máximo de 10 elementos
+        const page = parseInt(req.query.page) || 1; // Si no se especifica page, se devuelve la primera página
+        const sort = req.query.sort === "asc" ? "price" : req.query.sort === "desc" ? "-price" : null; // Si se especifica sort, se ordena por precio ascendente o descendente según el valor recibido
+        const query = req.query.query || {}; // Si no se especifica query, se devuelve una búsqueda general
+        const consulta={
+          "page":page,
+          "sort":sort,
+          "query":query,
+          "limit":limit
+        }        
+        
+        const respuesta =JSON.parse(JSON.stringify(await producto.getAll(consulta))) 
+        console.log(respuesta)
+        return res.render("home",{products:respuesta,prevLink:respuesta.prevLink,nextLink:respuesta.nextLink})
       }
     } catch (error) {
       console.log(error);
