@@ -1,41 +1,46 @@
 const passport = require("passport");
 const User = require("../Dao/Model/userSchema");
-const GitHubStrategy = require("passport-github2").Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 
 const initializePassport = () => {
-    passport.use(
-        new GitHubStrategy(
-            {
-                clientID: "Iv1.0907147aec869fe7",
-                clientSecret: "158565958b7b7eae7826e29e02f22e5e9a8617dc",
-                callbackURL: "http://localhost:3000/auth/github/callback", // Ruta de callback para redirigir después de la autenticación
-                scope: ["user:email"],
-            },
-            async function (accessToken, refreshToken, profile, cb) {
-                // Aquí puedes guardar el usuario en la base de datos o hacer cualquier otra lógica de autenticación
-
-                try {
-                    const user = await User.findOne({ email: profile.emails[0].value });
-                    if (!user) {
-                        const newUser = {
-                            first_name: profile.name,
-                            last_name: profile.name,
-                            username: profile.username,
-                            email: profile.emails[0].value,
-                        };
-                        const reponse = await  User.create(newUser);
-                        return cb(null, reponse);
-                    }else{
-                        return cb(null, user);
-                    }
-                } catch (error) {
-                    return cb(error)
-                }
-
-                //return cb(null, profile);
+    passport.use("current",
+        new LocalStrategy(
+          {
+            usernameField: 'email', // Campo del formulario que contiene el correo electrónico
+          },
+          async (email, password, done) => {
+            try {
+              // Buscar el usuario en la base de datos por su correo electrónico
+              let user = await User.findOne({ email });
+    
+              if (!user) {
+                // Crear un nuevo usuario si no existe
+                const newUser = {
+                  first_name: profile.name,
+                  last_name: profile.name,
+                  username: profile.username,
+                  email: profile.emails[0].value,
+                  password: password, // Guardar la contraseña como hash antes de usar en producción
+                };
+    
+                user = await User.create(newUser);
+              }
+    
+              // Verificar la contraseña del usuario
+              const isMatch = await bcrypt.compare(password, user.password);
+    
+              if (!isMatch) {
+                return done(null, false, { message: 'Correo electrónico o contraseña incorrectos' });
+              }
+    
+              // El usuario y la contraseña son válidos, devolver el usuario
+              return done(null, user);
+            } catch (error) {
+              return done(error);
             }
+          }
         )
-    );
+      );
 
     // Serializar el usuario para almacenarlo en la sesión
     passport.serializeUser((user, done) => {

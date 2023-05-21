@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 
 // Controlador para mostrar el formulario de login
 function showLogin(req, res) {
+  console.log(req.session)
   if (req.session.user) {
     // Si el usuario ya está logueado, redirigir al perfil
     return res.redirect('/profile');
@@ -13,6 +14,7 @@ function showLogin(req, res) {
 
 // Controlador para mostrar el formulario de registro
 function showRegister(req, res) {
+  console.log(req.session)
   if (req.session.user) {
     // Si el usuario ya está logueado, redirigir al perfil
     return res.redirect('/profile');
@@ -66,7 +68,7 @@ function login(req, res) {
           if (result) {
             // Contraseña válida, guardar el usuario en la sesión
             req.session.user = user;
-
+            console.log(req.session)
             if (user.role === 'admin') {
               // Redirigir al usuario administrador a la vista de administrador
               res.redirect('/admin');

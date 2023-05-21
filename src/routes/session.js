@@ -31,25 +31,10 @@ router.get("/logout", userController.logout);
 
 router.get("/admin", requireAuth, userController.showAdmin);
 
-// Ruta para iniciar el proceso de autenticación de GitHub
-router.get("/auth/github", passport.authenticate("github"));
-
-// Ruta de callback después de la autenticación de GitHub
-router.get("/auth/github/callback", passport.authenticate("github", { failureRedirect: "/" }), function (req, res) {
-    // Autenticación exitosa, redirigir a la página deseada
-    req.session.user = req.user;
-
-    if (req.session.user.role === "admin") {
-        // Redirigir al usuario administrador a la vista de administrador
-        res.redirect("/admin");
-    } else {
-        // Redirigir a los usuarios normales a la vista de productos
-        res.redirect("/profile");
-    }
-});
 
 router.get('/current', passport.authenticate('current', { session: false }), (req, res) => {
-    res.json(req.user);
+    
+    res.send(req.user);
   });
   
 
