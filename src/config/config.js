@@ -1,6 +1,7 @@
 const {connect} = require('mongoose');
+const MongoStore = require('connect-mongo');
 
-url="mongodb+srv://rodcerflo:K03QGaME93yhiB7B@coder.ctilfrd.mongodb.net/test"
+const url="mongodb+srv://rodcerflo:K03QGaME93yhiB7B@coder.ctilfrd.mongodb.net/test"
 
 const config ={
 
@@ -16,6 +17,9 @@ const config ={
 }
 
 
+
+
 module.exports={
-    config
+    config,
+   
 }

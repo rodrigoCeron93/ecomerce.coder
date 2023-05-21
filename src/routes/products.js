@@ -1,14 +1,14 @@
-const { response } = require("express");
 const express = require("express");
 const { Router } = express;
 const Productos = require("../Dao/products");
-
+const {authPassport} = require("../config/authPassport");
+const { authorization } = require("../config/autorizationPassport");
 
 const producto = new Productos();
 
 const router = Router();
 
-router.get("/products/:id?", async (req, res) => {
+router.get("/products/:id?",authPassport("jwt",authorization("admin")), async (req, res) => {
 
     const id = req.params.id;
     //const limit = req.query.limit;
